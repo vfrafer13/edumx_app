@@ -31,6 +31,13 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main_activity">
         </activity>
+        <activity
+            android:name=".MyCourseUpdateActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.nezzi.edumx.MyCourseUpdateActivity" />
+        </activity>
     </application>
 
 </manifest>

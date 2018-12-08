@@ -30,6 +30,15 @@ public class Course implements Serializable {
         this.setTopics(topics);
     }
 
+    public Course(String name, String description, double price, int duration, String requirements, String topics) {
+        this.setName(name);
+        this.setDescription(description);
+        this.setPrice(price);
+        this.setDuration(duration);
+        this.setRequirements(requirements);
+        this.setTopics(topics);
+    }
+
 
     public int getId() {
         return id;

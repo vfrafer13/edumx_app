@@ -10,8 +10,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.nezzi.edumx.MyCourseUpdateActivity;
 import com.example.nezzi.edumx.R;
 import com.example.nezzi.edumx.models.Course;
 
@@ -36,6 +38,7 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
     private String mParam2;
 
     private TextView desc;
+    private Button btnCourseEdit, btnCourseDelete, btnCourseBuy;
     Course course;
     TextView nameCourse;
 
@@ -77,8 +80,11 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mycourse_detail, container, false);
-        desc= (TextView) view.findViewById(R.id.txt_courseDesc);
+        desc= view.findViewById(R.id.txt_courseDesc);
         nameCourse = view.findViewById(R.id.txt_courseName);
+        btnCourseDelete = view.findViewById(R.id.btnCourseDelete);
+        btnCourseEdit = view.findViewById(R.id.btnCourseEdit);
+        btnCourseBuy = view.findViewById(R.id.btnCourseBuy);
 
         Bundle appObject = getArguments();
         course=null;
@@ -89,8 +95,9 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
 
         }
 
-        /*btnAppEdit.setOnClickListener(this);
-        btnAppDelete.setOnClickListener(this);*/
+        btnCourseDelete.setOnClickListener(this);
+        btnCourseEdit.setOnClickListener(this);
+        btnCourseBuy.setOnClickListener(this);
 
         getActivity().setTitle("Detalle del Curso");
 
@@ -128,14 +135,29 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
     }
 
     public void onClick(View view) {
-        /**
         switch (view.getId()){
-            case R.id.btnAppEdit: updateCourse();
+            case R.id.btnCourseEdit: updateCourse();
                 break;
-            case R.id.btnAppDelete: deleteCourse();
+            case R.id.btnCourseDelete: deleteCourse();
                 break;
-        }**/
+            case R.id.btnCourseBuy: buyCourse();
+                break;
+        }
 
+    }
+
+    public void updateCourse() {
+        Intent intent = new Intent(getActivity(), MyCourseUpdateActivity.class);
+        intent.putExtra("course", course);
+        startActivityForResult(intent, 1);
+    }
+
+    public void deleteCourse() {
+        //TODO
+    }
+
+    public void buyCourse() {
+        //TODO
     }
 
     @Override

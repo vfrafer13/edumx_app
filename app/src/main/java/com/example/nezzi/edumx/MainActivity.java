@@ -68,11 +68,6 @@ public class MainActivity extends AppCompatActivity implements FragmentComunicat
         courseDetailFragment = new CourseDetailFragment();
         myCourseListFragment = new MyCoursesListFragment();
         myCourseDetailFragment = new MyCourseDetailFragment();
-        /**
-        eventFragment = new EventFragment();
-        eventDetailFragment = new EventDetailFragment();
-        contactActivity = new ContactActivity();
-        mainFragment = new MainFragment();*/
     }
 
     private void setFirstFragment(Intent intent) {
