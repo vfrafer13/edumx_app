@@ -6,29 +6,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.example.nezzi.edumx.R;
 import com.example.nezzi.edumx.models.Course;
 
 import java.util.List;
 
 /**
-
- * TODO: Replace the implementation with code for your data type.
+ * Created by ankit on 27/10/17.
  */
 
-public class MyCoursesRecyclerViewAdapter extends RecyclerView.Adapter<MyCoursesRecyclerViewAdapter.ViewHolder> {
+public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder> implements View.OnClickListener {
 
     private Context context;
     private List<Course> list;
+    private View.OnClickListener listener;
 
-    public MyCoursesRecyclerViewAdapter(Context context, List<Course> list) {
+    public CourseAdapter(Context context, List<Course> list) {
         this.context = context;
         this.list = list;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.fragment_courses, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.fragment_course_item, parent, false);
+        v.setOnClickListener(this);
         return new ViewHolder(v);
     }
 
@@ -36,7 +38,7 @@ public class MyCoursesRecyclerViewAdapter extends RecyclerView.Adapter<MyCourses
     public void onBindViewHolder(ViewHolder holder, int position) {
         Course course = list.get(position);
 
-        holder.textName.setText(String.valueOf(course.getName()));
+        holder.txtCatName.setText(course.getName());
 
     }
 
@@ -45,14 +47,25 @@ public class MyCoursesRecyclerViewAdapter extends RecyclerView.Adapter<MyCourses
         return list.size();
     }
 
+    @Override
+    public void onClick(View view) {
+        if (listener!=null){
+            listener.onClick(view);
+        }
+    }
+
+    public void setOnClickListener(View.OnClickListener listener){
+        this.listener=listener;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textName, textInstructor;
+        public TextView txtCatName;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            textName = itemView.findViewById(R.id.tv_courseName);
-            textInstructor = itemView.findViewById(R.id.tv_courseInstructor);
+            txtCatName = itemView.findViewById(R.id.txt_catName);
         }
     }
+
 }

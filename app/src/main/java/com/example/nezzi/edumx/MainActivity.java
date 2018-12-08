@@ -10,16 +10,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.example.nezzi.edumx.fragments.CoursesFragment;
+import com.example.nezzi.edumx.fragments.CoursesListFragment;
+import com.example.nezzi.edumx.fragments.MainFragment;
 import com.example.nezzi.edumx.fragments.MyAccountFragment;
-import com.example.nezzi.edumx.fragments.UserCoursesFragment;
 import com.example.nezzi.edumx.interfaces.FragmentComunication;
+import com.example.nezzi.edumx.models.Category;
 import com.example.nezzi.edumx.models.Course;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentComunication {
 
     private TextView mTextMessage;
-    private CoursesFragment coursesFragment;
+    private CoursesListFragment coursesListFragment;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -72,17 +73,17 @@ public class MainActivity extends AppCompatActivity {
             case 0:
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
-                CoursesFragment courses = new CoursesFragment();
-                fragmentTransaction.replace(R.id.fragment, courses);
+                MainFragment mainCategories = new MainFragment();
+                fragmentTransaction.replace(R.id.fragment, mainCategories);
                 fragmentTransaction.commit();
                 break;
             case 1:
-                fragmentManager = getSupportFragmentManager();
+                /**fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
                 UserCoursesFragment userCourses = new UserCoursesFragment();
                 fragmentTransaction.replace(R.id.fragment, userCourses);
                 fragmentTransaction.commit();
-                break;
+                break;**/
             case 2:
                 fragmentManager = getSupportFragmentManager();
                 fragmentTransaction = fragmentManager.beginTransaction();
@@ -92,23 +93,32 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-    /**
-    @Override
-    public void sendCourse(Course appointment) {
-        appointmentDetailFragment= (AppointmentDetailFragment) this.getSupportFragmentManager().
-                findFragmentById(R.id.fragAppDetail);
 
-        if(appointmentDetailFragment!=null && findViewById(R.id.fragment)==null){
-            appointmentDetailFragment.setInfo(appointment);
+
+    @Override
+    public void sendCategory(Category category) {
+        coursesListFragment = (CoursesListFragment) this.getSupportFragmentManager().
+                findFragmentById(R.id.frag_courses_list);
+
+        coursesListFragment.setCategoryId(category.getId());
+
+        if(coursesListFragment!=null && findViewById(R.id.fragment)==null){
+            //setinfo
         }else{
-            appointmentDetailFragment=new AppointmentDetailFragment();
+            coursesListFragment=new CoursesListFragment();
             Bundle bundleSend=new Bundle();
-            bundleSend.putSerializable("app_object",appointment);
-            appointmentDetailFragment.setArguments(bundleSend);
+            bundleSend.putSerializable("app_object", category);
+            coursesListFragment.setArguments(bundleSend);
 
             getSupportFragmentManager().beginTransaction().
-                    replace(R.id.fragment,appointmentDetailFragment).
+                    replace(R.id.fragment,coursesListFragment).
                     addToBackStack(null).commit();
         }
-    }**/
+
+    }
+
+    @Override
+    public void sendCourse(Course course) {
+
+    }
 }

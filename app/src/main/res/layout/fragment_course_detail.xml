@@ -1,0 +1,63 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragEventDetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.nezzi.edumx.fragments.CourseDetailFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/txt_courseDesc"
+        android:layout_width="309dp"
+        android:layout_height="65dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginStart="36dp"
+        android:fontFamily="sans-serif"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_courseName" />
+
+    <Button
+        android:id="@+id/btnCourseEdit"
+        android:layout_width="134dp"
+        android:layout_height="52dp"
+        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginStart="56dp"
+        android:text="Editar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnCourseDelete"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnCourseDelete"
+        android:layout_width="128dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginStart="6dp"
+        android:onClick="onClick"
+        android:text="Eliminar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnCourseEdit" />
+
+    <TextView
+        android:id="@+id/txt_courseName"
+        android:layout_width="241dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="105dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="44dp"
+        android:fontFamily="sans-serif"
+        android:textAppearance="?attr/textAppearanceListItem"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
