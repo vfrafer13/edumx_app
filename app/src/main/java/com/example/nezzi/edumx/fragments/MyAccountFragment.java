@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.nezzi.edumx.R;
+import com.example.nezzi.edumx.models.User;
 
 
 /**
@@ -28,6 +30,9 @@ public class MyAccountFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private TextView txt_username, txt_email, txt_role, txt_sex;
+    private User user;
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,6 +73,20 @@ public class MyAccountFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_my_account, container, false);
 
+        user = null;
+
+        txt_username = view.findViewById(R.id.txtUserName);
+        txt_email = view.findViewById(R.id.txtEmail);
+        txt_role = view.findViewById(R.id.txtRole);
+        txt_sex = view.findViewById(R.id.txtSex);
+
+        getUserInfo();
+
+        txt_username.setText(user.getName());
+        txt_email.setText(user.getEmail());
+        txt_role.setText(user.getRole());
+        txt_sex.setText(user.getSex());
+
         getActivity().setTitle("Mi Cuenta");
 
         return view;
@@ -92,6 +111,10 @@ public class MyAccountFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void getUserInfo() {
+        //TODO
     }
 
     /**
