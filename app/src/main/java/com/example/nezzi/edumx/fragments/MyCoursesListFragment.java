@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,26 +23,29 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.nezzi.edumx.APIUtility;
 import com.example.nezzi.edumx.R;
-import com.example.nezzi.edumx.adapters.CategoryAdapter;
+import com.example.nezzi.edumx.adapters.CourseAdapter;
+import com.example.nezzi.edumx.adapters.MyCourseAdapter;
 import com.example.nezzi.edumx.interfaces.FragmentComunication;
-import com.example.nezzi.edumx.models.Category;
+import com.example.nezzi.edumx.models.Course;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
+ * {@link MyCoursesListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MainFragment#newInstance} factory method to
+ * Use the {@link MyCoursesListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainFragment extends Fragment {
+public class MyCoursesListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,18 +56,22 @@ public class MainFragment extends Fragment {
     private String mParam2;
 
     private RecyclerView mList;
+
     Activity activity;
 
     private LinearLayoutManager linearLayoutManager;
     private DividerItemDecoration dividerItemDecoration;
-    private List<Category> categoryList;
+    private List<Course> courseList;
+    private MyCourseAdapter adapter;
+    private int categoryId;
+    private String URL;
+
     FragmentComunication fragmentComunication;
-    private CategoryAdapter adapter;
 
     private OnFragmentInteractionListener mListener;
     Handler handler;
 
-    public MainFragment(){
+    public MyCoursesListFragment(){
         handler = new Handler();
     }
 
@@ -75,11 +81,11 @@ public class MainFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MainFragment.
+     * @return A new instance of fragment CoursesListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MainFragment newInstance(String param1, String param2) {
-        MainFragment fragment = new MainFragment();
+    public static MyCoursesListFragment newInstance(String param1, String param2) {
+        MyCoursesListFragment fragment = new MyCoursesListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -100,10 +106,10 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_mycourses_list, container, false);
 
-        categoryList = new ArrayList<>();
-        mList = view.findViewById(R.id.category_list);
+        courseList = new ArrayList<>();
+        mList = view.findViewById(R.id.course_list);
 
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -113,19 +119,20 @@ public class MainFragment extends Fragment {
         mList.setLayoutManager(linearLayoutManager);
         mList.addItemDecoration(dividerItemDecoration);
 
-        adapter = new CategoryAdapter(categoryList);
+        URL = APIUtility.MY_COURSES_URL;
+
+        adapter = new MyCourseAdapter(courseList);
         getData();
+
         mList.setAdapter(adapter);
 
 
-        getActivity().setTitle("Bienvenido");
-        TextView title = view.findViewById(R.id.txt_ListTitle);
-        title.setText("Categorías Disponibles");
+        getActivity().setTitle("Mis Cursos");
 
         adapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragmentComunication.sendCategory(categoryList.get(mList.getChildAdapterPosition(view)).getId());
+                fragmentComunication.sendMyCourse(courseList.get(mList.getChildAdapterPosition(view)));
             }
         });
         return view;
@@ -159,8 +166,7 @@ public class MainFragment extends Fragment {
         progressDialog.setMessage("Loading...");
         progressDialog.show();
 
-        jsonArrayRequest(APIUtility.CAT_URL, progressDialog);
-
+        jsonArrayRequest(URL, progressDialog);
     }
 
     public void jsonArrayRequest(String url, final ProgressDialog progressDialog) {
@@ -172,12 +178,18 @@ public class MainFragment extends Fragment {
                     try {
                         JSONObject jsonObject = new JSONObject(String.valueOf(response.getJSONObject(i)));
 
-                        Category category = new Category();
-                        category.setName(jsonObject.getString("name"));
-                        category.setIconUrl(jsonObject.getString("icon"));
-                        category.setId(jsonObject.getInt("id"));
+                        Course course = new Course();
+                        course.setId(jsonObject.getInt("id"));
+                        course.setName(jsonObject.getString("name"));
+                        course.setDescription(jsonObject.getString("description"));
+                        course.setPrice(jsonObject.getDouble("price"));
+                        course.setInstructor(jsonObject.getInt("instructor"));
+                        course.setDuration(jsonObject.getInt("duration"));
+                        course.setRequirements(jsonObject.getString("requirements"));
+                        course.setRating(jsonObject.getDouble("rating"));
+                        course.setTopics(jsonObject.getString("topics"));
 
-                        categoryList.add(category);
+                        courseList.add(course);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         progressDialog.dismiss();
@@ -192,7 +204,18 @@ public class MainFragment extends Fragment {
                 Log.e("Volley", error.toString());
                 progressDialog.dismiss();
             }
-        });
+        }) {
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+
+                if (APIUtility.ACCESS_TOKEN != null) {
+                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                }
+
+                return params;
+            }
+        };
+
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(jsonArrayRequest);
     }
@@ -210,5 +233,9 @@ public class MainFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setCategoryId (int id) {
+        categoryId = id;
     }
 }

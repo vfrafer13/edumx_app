@@ -18,28 +18,24 @@ import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> implements View.OnClickListener {
 
-    private Context context;
     private List<Category> list;
     private View.OnClickListener listener;
 
-    public CategoryAdapter(Context context, List<Category> list) {
-        this.context = context;
+    public CategoryAdapter(List<Category> list) {
         this.list = list;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.fragment_category_item, parent, false);
+    public CategoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_category_item, parent, false);
         v.setOnClickListener(this);
-        return new ViewHolder(v);
+        return new CategoryAdapter.ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Category category = list.get(position);
-
-        holder.txtCatName.setText(category.getName());
-
+        holder.mItem = list.get(position);
+        holder.mCatNameView.setText(list.get(position).getName());
     }
 
     @Override
@@ -59,13 +55,21 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtCatName;
+        public final View mView;
+        public final TextView mCatNameView;
+        public Category mItem;
 
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            txtCatName = itemView.findViewById(R.id.txt_catName);
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            mCatNameView = (TextView) view.findViewById(R.id.txt_catName);
         }
+
+        @Override
+        public String toString() {
+            return super.toString() + " '" + mCatNameView.getText() + "'";
+        }
+
     }
 
 }

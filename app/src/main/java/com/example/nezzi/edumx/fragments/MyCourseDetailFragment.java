@@ -20,12 +20,12 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CourseDetailFragment.OnFragmentInteractionListener} interface
+ * {@link MyCourseDetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CourseDetailFragment#newInstance} factory method to
+ * Use the {@link MyCourseDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CourseDetailFragment extends Fragment implements View.OnClickListener {
+public class MyCourseDetailFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,7 +41,7 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
 
     private OnFragmentInteractionListener mListener;
 
-    public CourseDetailFragment() {
+    public MyCourseDetailFragment() {
         // Required empty public constructor
     }
 
@@ -54,8 +54,8 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
      * @return A new instance of fragment CourseDetailFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CourseDetailFragment newInstance(String param1, String param2) {
-        CourseDetailFragment fragment = new CourseDetailFragment();
+    public static MyCourseDetailFragment newInstance(String param1, String param2) {
+        MyCourseDetailFragment fragment = new MyCourseDetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -76,7 +76,7 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_course_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_mycourse_detail, container, false);
         desc= (TextView) view.findViewById(R.id.txt_courseDesc);
         nameCourse = view.findViewById(R.id.txt_courseName);
 
@@ -146,8 +146,8 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
         if(resultCode==RESULT_OK){
             fragmentManager = getActivity().getSupportFragmentManager();
             fragmentTransaction = fragmentManager.beginTransaction();
-            CoursesListFragment courseFragment = new CoursesListFragment();
-            fragmentTransaction.replace(R.id.fragment, courseFragment);
+            MyCoursesListFragment myCoursesListFragment = new MyCoursesListFragment();
+            fragmentTransaction.replace(R.id.fragment, myCoursesListFragment);
             fragmentTransaction.commit();
         }
     }

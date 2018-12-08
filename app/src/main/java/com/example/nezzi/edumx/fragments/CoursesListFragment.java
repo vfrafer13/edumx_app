@@ -1,5 +1,6 @@
 package com.example.nezzi.edumx.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -21,7 +23,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.nezzi.edumx.APIUtility;
 import com.example.nezzi.edumx.R;
+import com.example.nezzi.edumx.adapters.CategoryAdapter;
 import com.example.nezzi.edumx.adapters.CourseAdapter;
+import com.example.nezzi.edumx.interfaces.FragmentComunication;
 import com.example.nezzi.edumx.models.Course;
 
 import org.json.JSONArray;
@@ -51,12 +55,16 @@ public class CoursesListFragment extends Fragment {
 
     private RecyclerView mList;
 
+    Activity activity;
+
     private LinearLayoutManager linearLayoutManager;
     private DividerItemDecoration dividerItemDecoration;
     private List<Course> courseList;
     private CourseAdapter adapter;
     private int categoryId;
     private String URL;
+
+    FragmentComunication fragmentComunication;
 
     private OnFragmentInteractionListener mListener;
     Handler handler;
@@ -96,12 +104,10 @@ public class CoursesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-
-        mList = view.findViewById(R.id.course_list);
+        View view = inflater.inflate(R.layout.fragment_courses_list, container, false);
 
         courseList = new ArrayList<>();
-        adapter = new CourseAdapter(getContext(), courseList);
+        mList = view.findViewById(R.id.course_list);
 
         linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -110,13 +116,25 @@ public class CoursesListFragment extends Fragment {
         mList.setHasFixedSize(true);
         mList.setLayoutManager(linearLayoutManager);
         mList.addItemDecoration(dividerItemDecoration);
-        mList.setAdapter(adapter);
 
         URL = APIUtility.COURSE_CAT_URL + String.valueOf(categoryId);
 
+        adapter = new CourseAdapter(courseList);
         getData();
 
-        getActivity().setTitle("Inicio");
+        mList.setAdapter(adapter);
+
+
+        getActivity().setTitle("Categoría - ");
+        TextView title = view.findViewById(R.id.txt_ListTitle);
+        title.setText("Cursos Disponibles");
+
+        adapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragmentComunication.sendCourse(courseList.get(mList.getChildAdapterPosition(view)));
+            }
+        });
         return view;
     }
 
@@ -130,6 +148,11 @@ public class CoursesListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        if(context instanceof Activity){
+            this.activity= (Activity) context;
+            fragmentComunication= (FragmentComunication) this.activity;
+        }
     }
 
     @Override

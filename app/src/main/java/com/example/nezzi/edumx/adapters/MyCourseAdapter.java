@@ -11,24 +11,21 @@ import com.example.nezzi.edumx.models.Course;
 
 import java.util.List;
 
-/**
- * Created by ankit on 27/10/17.
- */
 
-public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder> implements View.OnClickListener {
+public class MyCourseAdapter extends RecyclerView.Adapter<MyCourseAdapter.ViewHolder> implements View.OnClickListener {
 
     private List<Course> list;
     private View.OnClickListener listener;
 
-    public CourseAdapter(List<Course> list) {
+    public MyCourseAdapter(List<Course> list) {
         this.list = list;
     }
 
     @Override
-    public CourseAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_course_item, parent, false);
+    public MyCourseAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_mycourse_item, parent, false);
         v.setOnClickListener(this);
-        return new CourseAdapter.ViewHolder(v);
+        return new MyCourseAdapter.ViewHolder(v);
     }
 
     @Override

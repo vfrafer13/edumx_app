@@ -11,6 +11,8 @@ public interface FragmentComunication {
 
     public void sendCourse (Course course);
 
-    public void sendCategory (Category category);
+    public void sendCategory (int id);
+
+    public void sendMyCourse (Course course);
 
 }
