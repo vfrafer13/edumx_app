@@ -1,5 +1,6 @@
 package com.example.nezzi.edumx;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -69,6 +70,11 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
+
+        final String accessToken = APIUtility.getAccesToken(this);
+        if (accessToken != null && !accessToken.isEmpty()) {
+            onLoginSuccess();
+        }
     }
 
     public void login() {
@@ -152,6 +158,7 @@ public class LoginActivity extends AppCompatActivity {
     private void requestLogin(final String email, final String password) {
 
         try {
+            final Activity activity = this;
             final JSONObject jsonBody = new JSONObject("{\"email\":\"" + email + "\", \"password\":\"" + password + "\"}");
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -164,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 JSONObject successObj = response.getJSONObject("success");
 
-                                APIUtility.ACCESS_TOKEN = successObj.getString("token");
+                                APIUtility.setAccesToken(successObj.getString("token"), activity);
 
                                 onLoginSuccess();
                             } catch (JSONException ex) {
@@ -180,20 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                             onLoginFailed();
                         }
                     }
-            ) {
-
-                //This is for Headers If You Needed
-           /* @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<>();
-
-                if (APIUtility.ACCESS_TOKEN != null) {
-                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
-                }
-
-                return params;
-            }*/
-            };
+            );
 
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             requestQueue.add(jsonObjectRequest);

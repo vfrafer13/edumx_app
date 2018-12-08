@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements FragmentComunicat
     }
 
     public void requestToken() {
+        final String accessToken = APIUtility.getAccesToken(this);
+
         if (APIUtility.clientToken != null && !APIUtility.clientToken.isEmpty()) {
             return;
         }
@@ -219,8 +221,8 @@ public class MainActivity extends AppCompatActivity implements FragmentComunicat
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
 
-                if (APIUtility.ACCESS_TOKEN != null) {
-                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                if (accessToken != null) {
+                    params.put("Authorization", "Bearer " + accessToken);
                 }
 
                 return params;

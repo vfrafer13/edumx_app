@@ -11,56 +11,50 @@
 
     <TextView
         android:id="@+id/txtUserName"
-        android:layout_width="155dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="213dp"
-        android:layout_marginBottom="25dp"
+        android:layout_width="320dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="30dp"
         android:text="Usuario"
-        app:layout_constraintBottom_toTopOf="@+id/txtEmail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.872"
         tools:text="Usuario" />
 
     <TextView
         android:id="@+id/txtEmail"
-        android:layout_width="157dp"
+        android:layout_width="320dp"
         android:layout_height="36dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="211dp"
-        android:layout_marginBottom="26dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
         android:text="Email"
-        app:layout_constraintBottom_toTopOf="@+id/txtRole"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtUserName"
         tools:text="Email" />
 
     <TextView
         android:id="@+id/txtRole"
-        android:layout_width="156dp"
+        android:layout_width="320dp"
         android:layout_height="33dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="211dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
         android:text="Rol"
-        app:layout_constraintBottom_toTopOf="@+id/txtSex"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail"
         tools:text="Rol" />
 
     <Button
         android:id="@+id/btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="128dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginBottom="110dp"
+        android:layout_marginStart="300dp"
+        android:layout_marginEnd="300dp"
+        android:layout_marginBottom="25dp"
         android:text="Cerrar Sesión"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,14 +62,14 @@
 
     <TextView
         android:id="@+id/txtSex"
-        android:layout_width="156dp"
+        android:layout_width="320dp"
         android:layout_height="33dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="211dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
         android:text="Género"
-        app:layout_constraintBottom_toTopOf="@+id/btn_logout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtRole" />
 
 </android.support.constraint.ConstraintLayout>

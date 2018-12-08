@@ -1,5 +1,6 @@
 package com.example.nezzi.edumx;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
@@ -76,6 +77,7 @@ public class MyCourseUpdateActivity extends AppCompatActivity {
         int duration = Integer.parseInt(updateTxtDuration.getText().toString());
         String requirements = updateTxtRequirements.getText().toString();
         String topics = updateTxtTopics.getText().toString();
+        final String accessToken = APIUtility.getAccesToken(this);
 
         Course course = new Course(name, desc, price, duration, requirements, topics);
 
@@ -123,8 +125,8 @@ public class MyCourseUpdateActivity extends AppCompatActivity {
 
                     params.put("Content-Type", "application/json");
 
-                    if (APIUtility.ACCESS_TOKEN != null) {
-                        params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                    if (accessToken != null) {
+                        params.put("Authorization", "Bearer " + accessToken);
                     }
 
                     return params;

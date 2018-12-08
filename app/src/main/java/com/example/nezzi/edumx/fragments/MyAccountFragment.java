@@ -1,16 +1,33 @@
 package com.example.nezzi.edumx.fragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.nezzi.edumx.APIUtility;
 import com.example.nezzi.edumx.R;
 import com.example.nezzi.edumx.models.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -82,11 +99,6 @@ public class MyAccountFragment extends Fragment {
 
         getUserInfo();
 
-        txt_username.setText(user.getName());
-        txt_email.setText(user.getEmail());
-        txt_role.setText(user.getRole());
-        txt_sex.setText(user.getSex());
-
         getActivity().setTitle("Mi Cuenta");
 
         return view;
@@ -113,8 +125,107 @@ public class MyAccountFragment extends Fragment {
         mListener = null;
     }
 
+    public void logout() {
+        final Activity activity = this.getActivity();
+        final String accessToken = APIUtility.getAccesToken(activity);
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                APIUtility.LOGOUT_URL,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        progressDialog.dismiss();
+                        Log.d("logout", response.toString());
+
+                        APIUtility.removeAccesToken(activity);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Log.e("logout", error.toString());
+                        Toast.makeText(getContext(), "Error al cerrar sesión", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+
+                if (accessToken != null) {
+
+                    params.put("Authorization", "Bearer " + accessToken);
+                }
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(jsonObjectRequest);
+    }
+
     public void getUserInfo() {
-        //TODO
+        final String accessToken = APIUtility.getAccesToken(this.getActivity());
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                APIUtility.USER_URL,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        progressDialog.dismiss();
+                        Log.d("getUserInfo", response.toString());
+
+                        try {
+                            txt_username.setText(response.getString("name"));
+                            txt_email.setText(response.getString("email"));
+                            txt_role.setText(response.getInt("role") == 0 ? "Alumno" : "Instructor");
+                            txt_sex.setText(response.getInt("sex") == 0 ? "Femenino" : "Masculino");
+                        } catch (JSONException error) {
+                            Log.e("getUserInfo", error.toString());
+                            Toast.makeText(getContext(), "Error al obtener el usuario", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Log.e("getUserInfo", error.toString());
+                        Toast.makeText(getContext(), "Error al obtener el usuario", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+
+                if (accessToken != null) {
+
+                    params.put("Authorization", "Bearer " + accessToken);
+                }
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(jsonObjectRequest);
     }
 
     /**

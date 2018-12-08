@@ -171,6 +171,8 @@ public class MyCoursesListFragment extends Fragment {
 
     public void jsonArrayRequest(String url, final ProgressDialog progressDialog) {
 
+        final String accessToken = APIUtility.getAccesToken(this.getActivity());
+
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -208,8 +210,8 @@ public class MyCoursesListFragment extends Fragment {
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
 
-                if (APIUtility.ACCESS_TOKEN != null) {
-                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                if (accessToken != null) {
+                    params.put("Authorization", "Bearer " + accessToken);
                 }
 
                 return params;

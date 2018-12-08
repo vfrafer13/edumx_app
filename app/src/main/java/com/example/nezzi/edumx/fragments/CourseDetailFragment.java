@@ -234,6 +234,7 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
 
         Log.d("requestCheckout", "jsonstring: " + jsonString);
 
+        final String accessToken = APIUtility.getAccesToken(this.getActivity());
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading...");
@@ -267,9 +268,9 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
 
                     params.put("Content-Type", "application/json");
 
-                    if (APIUtility.ACCESS_TOKEN != null) {
+                    if (accessToken != null) {
 
-                        params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                        params.put("Authorization", "Bearer " + accessToken);
                     }
 
                     return params;

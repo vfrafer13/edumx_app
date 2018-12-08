@@ -178,6 +178,7 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
     }
 
     public void deleteCourse() {
+        final String accessToken = APIUtility.getAccesToken(this.getActivity());
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Loading...");
@@ -208,8 +209,8 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
             public Map<String, String> getHeaders() {
                 Map<String, String> params = new HashMap<>();
 
-                if (APIUtility.ACCESS_TOKEN != null) {
-                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                if (accessToken != null) {
+                    params.put("Authorization", "Bearer " + accessToken);
                 }
 
                 return params;
