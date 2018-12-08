@@ -15,4 +15,5 @@ public interface FragmentComunication {
 
     public void sendMyCourse (Course course);
 
+    public void setFragment(int position);
 }

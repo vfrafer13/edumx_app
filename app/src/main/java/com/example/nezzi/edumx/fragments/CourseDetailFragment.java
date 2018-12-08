@@ -1,5 +1,7 @@
 package com.example.nezzi.edumx.fragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,13 +9,33 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.braintreepayments.api.dropin.DropInActivity;
+import com.braintreepayments.api.dropin.DropInRequest;
+import com.braintreepayments.api.dropin.DropInResult;
+import com.example.nezzi.edumx.APIUtility;
 import com.example.nezzi.edumx.R;
+import com.example.nezzi.edumx.interfaces.FragmentComunication;
 import com.example.nezzi.edumx.models.Course;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -35,9 +57,14 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
     private String mParam1;
     private String mParam2;
 
+    private int DROP_IN_REQUEST = 200;
+    private Button btnCourseBuy;
     private TextView desc;
     Course course;
     TextView nameCourse;
+
+    Activity activity;
+    FragmentComunication fragmentComunication;
 
     private OnFragmentInteractionListener mListener;
 
@@ -79,6 +106,7 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
         View view = inflater.inflate(R.layout.fragment_course_detail, container, false);
         desc= (TextView) view.findViewById(R.id.txt_courseDesc);
         nameCourse = view.findViewById(R.id.txt_courseName);
+        btnCourseBuy = view.findViewById(R.id.btnCourseBuy);
 
         Bundle appObject = getArguments();
         course=null;
@@ -91,6 +119,7 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
 
         /*btnAppEdit.setOnClickListener(this);
         btnAppDelete.setOnClickListener(this);*/
+        btnCourseBuy.setOnClickListener(this);
 
         getActivity().setTitle("Detalle del Curso");
 
@@ -113,6 +142,10 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        if(context instanceof Activity){
+            this.activity= (Activity) context;
+            fragmentComunication= (FragmentComunication) this.activity;
+        }
     }
 
     @Override
@@ -128,19 +161,40 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
     }
 
     public void onClick(View view) {
-        /**
+
         switch (view.getId()){
-            case R.id.btnAppEdit: updateCourse();
+            case R.id.btnCourseBuy: buyCourse();
                 break;
-            case R.id.btnAppDelete: deleteCourse();
-                break;
-        }**/
+        }
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == DROP_IN_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                DropInResult result = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
+                String paymentMethodNonce = result.getPaymentMethodNonce().getNonce();
+                // send paymentMethodNonce to your server
+
+                Log.d("onActivityResult", "nonce: " + paymentMethodNonce);
+
+                requestCheckout(paymentMethodNonce);
+
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // canceled
+            } else {
+                // an error occurred, checked the returned exception
+                Exception exception = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
+                Log.e("PayPalDropIn", exception.toString());
+            }
+
+            return;
+        }
+
         FragmentManager fragmentManager;
         FragmentTransaction fragmentTransaction;
         if(resultCode==RESULT_OK){
@@ -150,6 +204,7 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
             fragmentTransaction.replace(R.id.fragment, courseFragment);
             fragmentTransaction.commit();
         }
+
     }
 
     /**
@@ -165,5 +220,68 @@ public class CourseDetailFragment extends Fragment implements View.OnClickListen
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void buyCourse() {
+        DropInRequest dropInRequest = new DropInRequest()
+                .clientToken(APIUtility.clientToken);
+        startActivityForResult(dropInRequest.getIntent(getContext()), DROP_IN_REQUEST);
+    }
+
+    public void requestCheckout(String nonce) {
+
+        String jsonString = "{\"nonce\": \"" +  nonce + "\", \"course_id\": \"" + course.getId() + "\"}";
+
+        Log.d("requestCheckout", "jsonstring: " + jsonString);
+
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        try {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.POST,
+                    APIUtility.PAYPAL_CHECKOUT_URL,
+                    new JSONObject(jsonString),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            progressDialog.dismiss();
+                            Log.e("PayPalService", response.toString());
+                            fragmentComunication.setFragment(1);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressDialog.dismiss();
+                            Log.e("PayPalService", error.toString());
+                        }
+                    }
+            ) {
+
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> params = new HashMap<>();
+
+                    params.put("Content-Type", "application/json");
+
+                    if (APIUtility.ACCESS_TOKEN != null) {
+
+                        params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                    }
+
+                    return params;
+                }
+            };
+
+            RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+            requestQueue.add(jsonObjectRequest);
+
+        } catch (JSONException error) {
+            progressDialog.dismiss();
+            Log.e("PayPalService", error.toString());
+        }
     }
 }

@@ -7,9 +7,16 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.nezzi.edumx.fragments.CourseDetailFragment;
 import com.example.nezzi.edumx.fragments.CoursesListFragment;
 import com.example.nezzi.edumx.fragments.MainFragment;
@@ -18,6 +25,12 @@ import com.example.nezzi.edumx.fragments.MyCourseDetailFragment;
 import com.example.nezzi.edumx.fragments.MyCoursesListFragment;
 import com.example.nezzi.edumx.interfaces.FragmentComunication;
 import com.example.nezzi.edumx.models.Course;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements FragmentComunication {
 
@@ -61,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements FragmentComunicat
         Intent intent = getIntent();
 
         setFirstFragment(intent);
+
+        requestToken();
     }
 
     private void initializeFragmentsActivities () {
@@ -168,5 +183,51 @@ public class MainActivity extends AppCompatActivity implements FragmentComunicat
                     replace(R.id.fragment,myCourseDetailFragment).
                     addToBackStack(null).commit();
         }
+    }
+
+    public void requestToken() {
+        if (APIUtility.clientToken != null && !APIUtility.clientToken.isEmpty()) {
+            return;
+        }
+
+        Log.d("CourseDetailFragment", "Requesting paypal token");
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                APIUtility.PAYPAL_TOKEN_URL,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("CourseDetailFragment", "onResponse: " + response.toString());
+                        try {
+                            APIUtility.clientToken = response.getString("clientToken");
+                        } catch (JSONException error) {
+                            Log.e("PayPalService", error.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("PayPalService", error.toString());
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+
+                if (APIUtility.ACCESS_TOKEN != null) {
+                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                }
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonObjectRequest);
     }
 }

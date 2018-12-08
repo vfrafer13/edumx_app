@@ -1,5 +1,7 @@
 package com.example.nezzi.edumx.fragments;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,15 +9,35 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.braintreepayments.api.dropin.DropInActivity;
+import com.braintreepayments.api.dropin.DropInRequest;
+import com.braintreepayments.api.dropin.DropInResult;
+import com.example.nezzi.edumx.APIUtility;
 import com.example.nezzi.edumx.MyCourseUpdateActivity;
 import com.example.nezzi.edumx.R;
+import com.example.nezzi.edumx.interfaces.FragmentComunication;
 import com.example.nezzi.edumx.models.Course;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,9 +60,12 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
     private String mParam2;
 
     private TextView desc;
-    private Button btnCourseEdit, btnCourseDelete, btnCourseBuy;
+    private Button btnCourseEdit, btnCourseDelete;
     Course course;
     TextView nameCourse;
+
+    Activity activity;
+    FragmentComunication fragmentComunication;
 
     private OnFragmentInteractionListener mListener;
 
@@ -84,7 +109,6 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
         nameCourse = view.findViewById(R.id.txt_courseName);
         btnCourseDelete = view.findViewById(R.id.btnCourseDelete);
         btnCourseEdit = view.findViewById(R.id.btnCourseEdit);
-        btnCourseBuy = view.findViewById(R.id.btnCourseBuy);
 
         Bundle appObject = getArguments();
         course=null;
@@ -97,7 +121,6 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
 
         btnCourseDelete.setOnClickListener(this);
         btnCourseEdit.setOnClickListener(this);
-        btnCourseBuy.setOnClickListener(this);
 
         getActivity().setTitle("Detalle del Curso");
 
@@ -120,6 +143,10 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        if(context instanceof Activity){
+            this.activity= (Activity) context;
+            fragmentComunication= (FragmentComunication) this.activity;
+        }
     }
 
     @Override
@@ -140,8 +167,6 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
                 break;
             case R.id.btnCourseDelete: deleteCourse();
                 break;
-            case R.id.btnCourseBuy: buyCourse();
-                break;
         }
 
     }
@@ -153,11 +178,50 @@ public class MyCourseDetailFragment extends Fragment implements View.OnClickList
     }
 
     public void deleteCourse() {
-        //TODO
+        final ProgressDialog progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.DELETE,
+                APIUtility.COURSE_URL + this.course.getId(),
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        progressDialog.dismiss();
+                        fragmentComunication.setFragment(1);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("LoginActivity", error.toString());
+                        progressDialog.dismiss();
+                        Toast.makeText(getContext(), "No se pudo eliminar", Toast.LENGTH_LONG).show();
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> params = new HashMap<>();
+
+                if (APIUtility.ACCESS_TOKEN != null) {
+                    params.put("Authorization", "Bearer " + APIUtility.ACCESS_TOKEN);
+                }
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(jsonObjectRequest);
     }
 
     public void buyCourse() {
-        //TODO
+
     }
 
     @Override

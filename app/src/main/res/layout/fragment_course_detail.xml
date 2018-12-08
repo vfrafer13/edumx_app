@@ -11,54 +11,30 @@
         android:id="@+id/txt_courseDesc"
         android:layout_width="309dp"
         android:layout_height="65dp"
-        android:layout_marginEnd="38dp"
         android:layout_marginStart="36dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="38dp"
         android:fontFamily="sans-serif"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_courseName" />
 
-    <Button
-        android:id="@+id/btnCourseEdit"
-        android:layout_width="134dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginEnd="6dp"
-        android:layout_marginBottom="56dp"
-        android:text="Editar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnCourseDelete"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnCourseDelete"
-        android:layout_width="128dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="56dp"
-        android:onClick="onClick"
-        android:text="Eliminar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnCourseEdit" />
 
     <Button
         android:id="@+id/btnCourseBuy"
         android:layout_width="128dp"
         android:layout_height="55dp"
         android:layout_marginStart="128dp"
-        android:layout_marginTop="184dp"
         android:layout_marginEnd="128dp"
-        android:layout_marginBottom="22dp"
+        android:layout_marginBottom="30dp"
         android:onClick="onClick"
         android:text="Comprar"
-        app:layout_constraintBottom_toTopOf="@+id/btnCourseDelete"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_courseDesc" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txt_courseName"
